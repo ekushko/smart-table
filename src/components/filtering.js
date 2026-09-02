@@ -1,6 +1,6 @@
 import { createComparison, defaultRules } from "../lib/compare.js";
 
-const compare = createComparison(defaultRules); 
+const compare = createComparison(defaultRules);
 
 export function initFiltering(elements, indexes) {
     Object.keys(indexes).forEach((elementName) => {
@@ -15,9 +15,15 @@ export function initFiltering(elements, indexes) {
     });
 
     return (data, state, action) => {
-        // @todo: #4.2 — обработать очистку поля
+        if (action && action.name === 'clear') {
+            const inputElement = action.parentElement.querySelector('.input');
+            inputElement.value = '';
 
-        // @todo: #4.5 — отфильтровать данные используя компаратор
-        return data.filter(row => compare(row, state)); 
+            const fieldName = action.dataset.field;
+            if (fieldName && state[fieldName] !== undefined) {
+                state[fieldName] = '';
+            }
+        }
+        return data.filter(row => compare(row, state));
     }
 }
